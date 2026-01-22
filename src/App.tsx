@@ -3843,23 +3843,21 @@ export default function App() {
       
       <div className="relative w-full z-[150] pt-12" style={{ backgroundColor: header.bgColor }}>
         <div className="w-full px-6 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
-            {/* Mobile: Logo à esquerda com menu hambúrguer ao lado */}
-            <div className="md:hidden flex items-center justify-between w-full">
-                <div className="flex items-center gap-3">
-                    <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-white p-2 bg-white/5 rounded-lg">
-                        {mobileMenuOpen ? <X size={24}/> : <Menu size={24}/>}
-                    </button>
-                    <div className="flex items-center cursor-pointer" onClick={() => { setActiveTabId('home'); window.scrollTo(0,0); }}>
-                        <div className="relative flex-shrink-0 flex items-center justify-center" style={{ width: `${header.logoSize || 80}px`, height: `${header.logoSize || 80}px`, minWidth: `${header.logoSize || 80}px`, minHeight: `${header.logoSize || 80}px` }}>
-                            {header.logoUrl ? <img src={header.logoUrl} alt="Logo" className="object-cover w-full h-full rounded-full" style={{ }} /> : (isAdmin && <div className="border-2 border-dashed border-gray-600 rounded-full flex items-center justify-center w-full h-full"><span className="text-xs text-gray-500">Logo</span></div>)}
-                            {isAdmin && <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full cursor-pointer z-10" onClick={(e) => { e.stopPropagation(); setLogoEditModal('header'); }}><Camera className="text-white" size={20} /></div>}
-                        </div>
+            {/* Mobile: Hambúrguer mais próximo do logo */}
+            <div className="md:hidden absolute top-8 left-4 z-50">
+                <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-white p-2 bg-white/5 rounded-lg">
+                    {mobileMenuOpen ? <X size={24}/> : <Menu size={24}/>}
+                </button>
+            </div>
+            
+            {/* Mobile: Logo, Título e Subtítulo Centralizados */}
+            <div className="md:hidden flex flex-col items-center justify-center w-full pt-8">
+                <div className="flex items-center justify-center cursor-pointer mb-4" onClick={() => { setActiveTabId('home'); window.scrollTo(0,0); }}>
+                    <div className="relative flex-shrink-0 flex items-center justify-center" style={{ width: `${header.logoSize || 100}px`, height: `${header.logoSize || 100}px`, minWidth: `${header.logoSize || 100}px`, minHeight: `${header.logoSize || 100}px` }}>
+                        {header.logoUrl ? <img src={header.logoUrl} alt="Logo" className="object-cover w-full h-full rounded-full" style={{ }} /> : (isAdmin && <div className="border-2 border-dashed border-gray-600 rounded-full flex items-center justify-center w-full h-full"><span className="text-xs text-gray-500">Logo</span></div>)}
+                        {isAdmin && <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full cursor-pointer z-10" onClick={(e) => { e.stopPropagation(); setLogoEditModal('header'); }}><Camera className="text-white" size={24} /></div>}
                     </div>
                 </div>
-            </div>
-
-            {/* Mobile: Título e Subtítulo Centralizados abaixo */}
-            <div className="md:hidden flex flex-col items-center justify-center w-full pt-4">
                 <div className="flex flex-col items-center text-center">
                     <div className="relative group">{renderStyledText(header.title)}{isAdmin && <button onClick={(e) => { e.stopPropagation(); setHeaderTitleEdit(true); }} className="absolute -top-2 -right-4 text-white bg-blue-600 rounded-full p-1 shadow-lg z-50"><Edit3 size={10}/></button>}</div>
                     <div className="relative group">{renderStyledText(header.subtitle)}{isAdmin && <button onClick={(e) => { e.stopPropagation(); setHeaderSubtitleEdit(true); }} className="absolute -top-2 -right-4 text-white bg-blue-600 rounded-full p-1 shadow-lg z-50"><Edit3 size={10}/></button>}</div>
