@@ -3843,21 +3843,23 @@ export default function App() {
       
       <div className="relative w-full z-[150] pt-12" style={{ backgroundColor: header.bgColor }}>
         <div className="w-full px-6 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
-            {/* Mobile: Hambúrguer no topo esquerdo */}
-            <div className="md:hidden absolute top-3 left-6 z-50">
-                <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-white p-2 bg-white/5 rounded-lg">
-                    {mobileMenuOpen ? <X size={24}/> : <Menu size={24}/>}
-                </button>
-            </div>
-            
-            {/* Mobile: Logo, Título e Subtítulo Centralizados */}
-            <div className="md:hidden flex flex-col items-center justify-center w-full pt-8">
-                <div className="flex items-center justify-center cursor-pointer mb-4" onClick={() => { setActiveTabId('home'); window.scrollTo(0,0); }}>
-                    <div className="relative flex-shrink-0 flex items-center justify-center" style={{ width: `${header.logoSize || 100}px`, height: `${header.logoSize || 100}px`, minWidth: `${header.logoSize || 100}px`, minHeight: `${header.logoSize || 100}px` }}>
-                        {header.logoUrl ? <img src={header.logoUrl} alt="Logo" className="object-cover w-full h-full rounded-full" style={{ }} /> : (isAdmin && <div className="border-2 border-dashed border-gray-600 rounded-full flex items-center justify-center w-full h-full"><span className="text-xs text-gray-500">Logo</span></div>)}
-                        {isAdmin && <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full cursor-pointer z-10" onClick={(e) => { e.stopPropagation(); setLogoEditModal('header'); }}><Camera className="text-white" size={24} /></div>}
+            {/* Mobile: Logo à esquerda com menu hambúrguer ao lado */}
+            <div className="md:hidden flex items-center justify-between w-full">
+                <div className="flex items-center gap-3">
+                    <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-white p-2 bg-white/5 rounded-lg">
+                        {mobileMenuOpen ? <X size={24}/> : <Menu size={24}/>}
+                    </button>
+                    <div className="flex items-center cursor-pointer" onClick={() => { setActiveTabId('home'); window.scrollTo(0,0); }}>
+                        <div className="relative flex-shrink-0 flex items-center justify-center" style={{ width: `${header.logoSize || 80}px`, height: `${header.logoSize || 80}px`, minWidth: `${header.logoSize || 80}px`, minHeight: `${header.logoSize || 80}px` }}>
+                            {header.logoUrl ? <img src={header.logoUrl} alt="Logo" className="object-cover w-full h-full rounded-full" style={{ }} /> : (isAdmin && <div className="border-2 border-dashed border-gray-600 rounded-full flex items-center justify-center w-full h-full"><span className="text-xs text-gray-500">Logo</span></div>)}
+                            {isAdmin && <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full cursor-pointer z-10" onClick={(e) => { e.stopPropagation(); setLogoEditModal('header'); }}><Camera className="text-white" size={20} /></div>}
+                        </div>
                     </div>
                 </div>
+            </div>
+
+            {/* Mobile: Título e Subtítulo Centralizados abaixo */}
+            <div className="md:hidden flex flex-col items-center justify-center w-full pt-4">
                 <div className="flex flex-col items-center text-center">
                     <div className="relative group">{renderStyledText(header.title)}{isAdmin && <button onClick={(e) => { e.stopPropagation(); setHeaderTitleEdit(true); }} className="absolute -top-2 -right-4 text-white bg-blue-600 rounded-full p-1 shadow-lg z-50"><Edit3 size={10}/></button>}</div>
                     <div className="relative group">{renderStyledText(header.subtitle)}{isAdmin && <button onClick={(e) => { e.stopPropagation(); setHeaderSubtitleEdit(true); }} className="absolute -top-2 -right-4 text-white bg-blue-600 rounded-full p-1 shadow-lg z-50"><Edit3 size={10}/></button>}</div>
@@ -4030,7 +4032,7 @@ export default function App() {
                                 )}
                             </div>
                         ) : (isAdmin && (<div className="w-full h-full flex flex-col items-center justify-center bg-gray-900 text-white/50"><Upload size={48} className="text-white" /><span className="font-bold text-xl text-white">Adicionar Banner</span><span className="text-xs text-yellow-500 mt-2">Rec: 1920x600px</span></div>))}
-                        {(home.bannerImages?.length > 1 && editingHotspotBannerIdx === null) && (<><button onClick={() => setCurrentBannerIndex(prev => (prev - 1 + home.bannerImages.length) % home.bannerImages.length)} className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 z-20"><ArrowLeft size={24}/></button><button onClick={() => setCurrentBannerIndex(prev => (prev + 1) % home.bannerImages.length)} className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 z-20"><ArrowRight size={24}/></button></>)}
+                        {(home.bannerImages?.length > 1 && editingHotspotBannerIdx === null) && (<><button onClick={() => setCurrentBannerIndex(prev => (prev - 1 + home.bannerImages.length) % home.bannerImages.length)} className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-black/20 text-white/60 p-1.5 md:p-2 rounded-full hover:bg-black/40 hover:text-white/90 transition-all z-20"><ArrowLeft size={20} className="md:w-6 md:h-6"/></button><button onClick={() => setCurrentBannerIndex(prev => (prev + 1) % home.bannerImages.length)} className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-black/20 text-white/60 p-1.5 md:p-2 rounded-full hover:bg-black/40 hover:text-white/90 transition-all z-20"><ArrowRight size={20} className="md:w-6 md:h-6"/></button></>)}
                     </div>
                     {isAdmin && editingHotspotBannerIdx === null && (<button onClick={() => setBannerEditModal(true)} className="absolute top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-full shadow-xl hover:bg-blue-500 z-50 flex items-center justify-center font-bold text-sm gap-2"><Edit3 size={16}/> EDITAR BANNER</button>)}
                 </div>
