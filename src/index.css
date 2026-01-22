@@ -1,0 +1,19 @@
+/* 1. Importações de fontes primeiro */
+@import url('https://fonts.googleapis.com/css2?family=Racing+Sans+One&family=Roboto:wght@400;700;900&family=Open+Sans:wght@400;700;800&family=Lato:wght@400;700;900&family=Montserrat:wght@400;700;900&family=Playfair+Display&family=Poppins&family=Raleway&family=Merriweather&family=Noto+Sans&family=Oswald&display=swap' );
+
+/* 2. Regras do Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 3. Estilos customizados */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ... cole aqui o resto dos seus estilos, como a animação .animate-scroll ... */
