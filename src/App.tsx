@@ -1613,7 +1613,7 @@ const FieldEditModal = ({ isOpen, onClose, fieldData, onSave, mode = 'template' 
     const [localData, setLocalData] = useState(fieldData);
     useEffect(() => { setLocalData(fieldData); }, [fieldData, isOpen]);
     if (!isOpen) return null;
-    const s = localData.style || { font: 'Arial', size: '14px', color: '#000000', labelColor: '#ef4444' };
+    const s = localData.style || { font: 'Arial', size: '14px', color: '#000000', labelColor: '#ef4444', bold: false };
     return (
         <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/90 backdrop-blur-sm">
             <div className="bg-[#1a1a1a] p-4 rounded-lg w-full max-w-[320px] border border-gray-700 shadow-2xl">
@@ -1642,6 +1642,10 @@ const FieldEditModal = ({ isOpen, onClose, fieldData, onSave, mode = 'template' 
                                 <div><label className="text-[10px] text-gray-500 font-bold uppercase">Cor</label><input type="color" value={localData.valueColor || s.color || '#000000'} onChange={(e)=>{ const color = normalizeHex(e.target.value); setLocalData({...localData, valueColor: color, style: {...s, color: color}}); }} className="w-full h-7 cursor-pointer border rounded border-gray-700 bg-transparent p-0"/></div>
                             </div>
                             <div><label className="text-[10px] text-gray-500 font-bold uppercase">Fonte</label><select className="w-full bg-black p-1.5 rounded border border-gray-700 text-white text-[10px]" value={s.font || 'Arial'} onChange={(e)=>setLocalData({...localData, style: {...s, font: e.target.value}})}>{fontOptions.map(f=><option key={f} value={f}>{f}</option>)}</select></div>
+                            <div className="flex items-center gap-2 bg-black/50 p-2 rounded border border-gray-700">
+                                <input type="checkbox" id="boldCheck" checked={s.bold || false} onChange={(e)=>setLocalData({...localData, style: {...s, bold: e.target.checked}})} className="w-4 h-4 cursor-pointer"/>
+                                <label htmlFor="boldCheck" className="text-xs text-white font-bold cursor-pointer flex items-center gap-1"><Bold size={14}/> Negrito</label>
+                            </div>
                         </>
                     )}
                 </div>
@@ -1798,31 +1802,36 @@ const TechSheetPage = ({ pageData, pageIndex, headerConfig, textStyle, updatePag
 			                                ) : (
                                     <div className="flex flex-col justify-end w-full h-full">
                                         {mode === 'input' ? (
-                                            <textarea 
-                                                value={field.value || ''} 
-                                                onChange={(e) => { 
-                                                    updateField(fIdx, { value: e.target.value }); 
-                                                    e.target.style.height = 'auto'; 
-                                                    e.target.style.height = e.target.scrollHeight + 'px'; 
+                                            <textarea
+                                                value={field.value || ''}
+                                                onChange={(e) => {
+                                                    updateField(fIdx, { value: e.target.value });
                                                 }}
-                                                onFocus={(e) => {
-                                                    e.target.style.height = 'auto'; 
-                                                    e.target.style.height = e.target.scrollHeight + 'px';
-                                                }}
-                                                className="bg-transparent outline-none resize-none overflow-hidden border-none focus:ring-0"
-                                                style={{ 
-                                                    fontFamily: fStyle.font, 
-                                                    fontSize: fStyle.size, 
+                                                className="bg-transparent outline-none resize-none border-none focus:ring-0 w-full h-full p-1"
+                                                style={{
+                                                    fontFamily: fStyle.font,
+                                                    fontSize: fStyle.size,
                                                     color: fStyle.color,
-                                                    width: '100%',
-                                                    height: 'auto',
-                                                    minHeight: fStyle.size
+                                                    fontWeight: fStyle.bold ? 'bold' : 'normal',
+                                                    overflow: 'hidden',
+                                                    wordWrap: 'break-word',
+                                                    lineHeight: '1.2'
                                                 }}
-                                                rows="1"
                                             />
                                         ) : (
-                                            <div className="overflow-hidden" style={{ fontFamily: fStyle.font, fontSize: fStyle.size, color: fStyle.color, backgroundColor: mode === 'template' ? 'rgba(0,0,255,0.05)' : 'transparent', whiteSpace: 'pre-wrap' }}>
-                                                {String(field.value || (mode === 'template' ? "Texto" : ""))}
+                                            <div className="w-full h-full p-1 overflow-hidden" style={{
+                                                fontFamily: fStyle.font,
+                                                fontSize: fStyle.size,
+                                                color: fStyle.color,
+                                                fontWeight: fStyle.bold ? 'bold' : 'normal',
+                                                backgroundColor: mode === 'template' ? 'rgba(0,0,255,0.05)' : 'transparent',
+                                                border: mode === 'template' ? '1px dashed rgba(0,0,255,0.3)' : '1px solid rgba(0,0,0,0.2)',
+                                                borderRadius: '2px',
+                                                whiteSpace: 'pre-wrap',
+                                                wordWrap: 'break-word',
+                                                lineHeight: '1.2'
+                                            }}>
+                                                {String(field.value || (mode === 'template' ? "Texto de exemplo" : ""))}
                                             </div>
                                         )}
                                     </div>
@@ -3843,8 +3852,8 @@ export default function App() {
       
       <div className="relative w-full z-[150] pt-12" style={{ backgroundColor: header.bgColor }}>
         <div className="w-full px-6 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
-            {/* Mobile: Hambúrguer no topo esquerdo */}
-            <div className="md:hidden absolute top-3 left-6 z-50">
+            {/* Mobile: Hambúrguer mais próximo do logo */}
+            <div className="md:hidden absolute top-8 left-4 z-50">
                 <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-white p-2 bg-white/5 rounded-lg">
                     {mobileMenuOpen ? <X size={24}/> : <Menu size={24}/>}
                 </button>
@@ -4030,7 +4039,7 @@ export default function App() {
                                 )}
                             </div>
                         ) : (isAdmin && (<div className="w-full h-full flex flex-col items-center justify-center bg-gray-900 text-white/50"><Upload size={48} className="text-white" /><span className="font-bold text-xl text-white">Adicionar Banner</span><span className="text-xs text-yellow-500 mt-2">Rec: 1920x600px</span></div>))}
-                        {(home.bannerImages?.length > 1 && editingHotspotBannerIdx === null) && (<><button onClick={() => setCurrentBannerIndex(prev => (prev - 1 + home.bannerImages.length) % home.bannerImages.length)} className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 z-20"><ArrowLeft size={24}/></button><button onClick={() => setCurrentBannerIndex(prev => (prev + 1) % home.bannerImages.length)} className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 z-20"><ArrowRight size={24}/></button></>)}
+                        {(home.bannerImages?.length > 1 && editingHotspotBannerIdx === null) && (<><button onClick={() => setCurrentBannerIndex(prev => (prev - 1 + home.bannerImages.length) % home.bannerImages.length)} className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-black/20 text-white/60 p-1.5 md:p-2 rounded-full hover:bg-black/40 hover:text-white/90 transition-all z-20"><ArrowLeft size={20} className="md:w-6 md:h-6"/></button><button onClick={() => setCurrentBannerIndex(prev => (prev + 1) % home.bannerImages.length)} className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-black/20 text-white/60 p-1.5 md:p-2 rounded-full hover:bg-black/40 hover:text-white/90 transition-all z-20"><ArrowRight size={20} className="md:w-6 md:h-6"/></button></>)}
                     </div>
                     {isAdmin && editingHotspotBannerIdx === null && (<button onClick={() => setBannerEditModal(true)} className="absolute top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-full shadow-xl hover:bg-blue-500 z-50 flex items-center justify-center font-bold text-sm gap-2"><Edit3 size={16}/> EDITAR BANNER</button>)}
                 </div>
