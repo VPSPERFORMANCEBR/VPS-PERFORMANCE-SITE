@@ -3944,12 +3944,12 @@ export default function App() {
          )}
         {activeTab.type === 'home' && (
             <div className="space-y-16 w-full">
-                <div ref={bannerContainerRef} className="relative h-[50vh] md:h-[60vh] md:rounded-3xl md:overflow-hidden md:border md:border-white/10 w-full bg-black">
-                    <div className="w-full h-full relative">
+                <div ref={bannerContainerRef} className="relative w-full md:rounded-3xl md:overflow-hidden md:border md:border-white/10">
+                    <div className="w-full relative">
                         {home.bannerImages && home.bannerImages.length > 0 ? (
-                            <div className="w-full h-full relative">
-                                <div onClick={()=>!isAdmin && home.bannerImages[currentBannerIndex]?.link && window.open(home.bannerImages[currentBannerIndex].link, '_blank')} className={`w-full h-full block ${(!isAdmin && home.bannerImages[currentBannerIndex]?.link) ? 'cursor-pointer' : ''}`}>
-                                    <img src={home.bannerImages[currentBannerIndex]?.url} className="w-full h-full object-contain" alt="Banner" />
+                            <div className="w-full relative">
+                                <div onClick={()=>!isAdmin && home.bannerImages[currentBannerIndex]?.link && window.open(home.bannerImages[currentBannerIndex].link, '_blank')} className={`w-full block ${(!isAdmin && home.bannerImages[currentBannerIndex]?.link) ? 'cursor-pointer' : ''}`}>
+                                    <img src={home.bannerImages[currentBannerIndex]?.url} className="w-full h-auto object-contain" alt="Banner" />
                                 </div>
 
                                 {(editingHotspotBannerIdx === currentBannerIndex ? localHotspots : (home.bannerImages[currentBannerIndex]?.hotspots || [])).map((hs, hIdx) => {
