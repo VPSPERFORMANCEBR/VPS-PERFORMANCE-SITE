@@ -1738,7 +1738,7 @@ const TechSheetPage = ({ pageData, pageIndex, headerConfig, textStyle, updatePag
 			    };
     return (
         <div className="mb-8 relative flex justify-center group/page" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onMouseLeave={handleMouseUp}>
-	            <div ref={pageRef} id={`page-${pageData.id}`} className="bg-white relative shadow-2xl overflow-hidden page-a4 tech-sheet-page" style={{ width: '210mm', height: '297mm', position: 'relative' }}>
+            <div ref={pageRef} className="bg-white relative shadow-2xl overflow-hidden page-a4" style={{ width: '210mm', height: '297mm', position: 'relative' }}>
                 {pageData.backgroundImage && ( <img src={pageData.backgroundImage} className="absolute inset-0 w-full h-full object-contain z-0 pointer-events-none" alt="bg"/> )}
 	                {!pageData.backgroundImage && (
 	                    <div className="p-8 flex justify-between items-center relative z-10">
@@ -1796,32 +1796,36 @@ const TechSheetPage = ({ pageData, pageIndex, headerConfig, textStyle, updatePag
 			                                        </div>
 			                                    </div>
 			                                ) : (
-	                                    <div className="flex flex-col justify-center w-full h-full">
-	                                        {mode === 'input' ? (
-	                                            <textarea 
-	                                                value={field.value || ''} 
-	                                                onChange={(e) => { 
-	                                                    updateField(fIdx, { value: e.target.value }); 
-	                                                }}
-	                                                className="bg-transparent outline-none resize-none overflow-hidden border-none focus:ring-0 p-0 m-0 leading-none"
-	                                                style={{ 
-	                                                    fontFamily: fStyle.font, 
-	                                                    fontSize: `${(field.height || 40) * 0.8}px`, 
-	                                                    color: fStyle.color,
-	                                                    width: '100%',
-	                                                    height: '100%',
-	                                                    display: 'flex',
-	                                                    alignItems: 'center',
-	                                                    verticalAlign: 'middle'
-	                                                }}
-	                                                rows="1"
-	                                            />
-	                                        ) : (
-	                                            <div className="overflow-hidden leading-none flex items-center" style={{ height: '100%', fontFamily: fStyle.font, fontSize: `${(field.height || 40) * 0.8}px`, color: fStyle.color, backgroundColor: mode === 'template' ? 'rgba(0,0,255,0.05)' : 'transparent', whiteSpace: 'nowrap' }}>
-	                                                {String(field.value || (mode === 'template' ? "Texto" : ""))}
-	                                            </div>
-	                                        )}
-	                                    </div>
+                                    <div className="flex flex-col justify-end w-full h-full">
+                                        {mode === 'input' ? (
+                                            <textarea 
+                                                value={field.value || ''} 
+                                                onChange={(e) => { 
+                                                    updateField(fIdx, { value: e.target.value }); 
+                                                    e.target.style.height = 'auto'; 
+                                                    e.target.style.height = e.target.scrollHeight + 'px'; 
+                                                }}
+                                                onFocus={(e) => {
+                                                    e.target.style.height = 'auto'; 
+                                                    e.target.style.height = e.target.scrollHeight + 'px';
+                                                }}
+                                                className="bg-transparent outline-none resize-none overflow-hidden border-none focus:ring-0"
+                                                style={{ 
+                                                    fontFamily: fStyle.font, 
+                                                    fontSize: fStyle.size, 
+                                                    color: fStyle.color,
+                                                    width: '100%',
+                                                    height: 'auto',
+                                                    minHeight: fStyle.size
+                                                }}
+                                                rows="1"
+                                            />
+                                        ) : (
+                                            <div className="overflow-hidden" style={{ fontFamily: fStyle.font, fontSize: fStyle.size, color: fStyle.color, backgroundColor: mode === 'template' ? 'rgba(0,0,255,0.05)' : 'transparent', whiteSpace: 'pre-wrap' }}>
+                                                {String(field.value || (mode === 'template' ? "Texto" : ""))}
+                                            </div>
+                                        )}
+                                    </div>
                                 )}
                                 {mode === 'template' && (
                                     <>
@@ -2296,90 +2300,38 @@ const TechSheetGenerator = ({ data, isEditing, onUpdate }) => {
                             <>
                                 <div className="w-full h-px bg-gray-700 my-2"></div>
                                 <div className="flex flex-col gap-3 w-full">
-	                                    <button onClick={() => {
-	                                        const pages = currentSheet.pages;
-	                                        let bestIdx = 0;
-	                                        let maxVisible = 0;
-	                                        pages.forEach((p, idx) => {
-	                                            const el = document.getElementById(`page-${p.id}`);
-	                                            if (el) {
-	                                                const rect = el.getBoundingClientRect();
-	                                                const visibleHeight = Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0);
-	                                                if (visibleHeight > maxVisible) {
-	                                                    maxVisible = visibleHeight;
-	                                                    bestIdx = idx;
-	                                                }
-	                                            }
-	                                        });
-	                                        const page = pages[bestIdx];
-	                                        const newFields = [...(page.fields || []), { id: generateId(), label: "", value: "", type: 'text', style: { font: currentSheet.textStyle.font, size: currentSheet.textStyle.size, color: currentSheet.textStyle.color, labelColor: currentSheet.headerConfig.lineColor }, x: 50, y: 50, width: 200, height: 40 }];
-	                                        updatePage(bestIdx, { ...page, fields: newFields });
-	                                    }} className="flex flex-col items-center gap-1 bg-blue-600 text-white p-2 rounded-xl text-[8px] font-black uppercase hover:bg-blue-700 transition-all" title="Adicionar Texto"><TypeIcon size={18}/><span>TEXTO</span></button>
-	                                    
-	                                    <div className="flex flex-col gap-2 bg-gray-800 p-2 rounded-xl border border-gray-700">
-	                                        <span className="text-[7px] text-gray-500 font-black text-center uppercase">Marcações</span>
-	                                        <div className="flex gap-1 justify-center">
-	                                            <button onClick={() => {
-	                                                const pages = currentSheet.pages;
-	                                                let bestIdx = 0;
-	                                                let maxVisible = 0;
-	                                                pages.forEach((p, idx) => {
-	                                                    const el = document.getElementById(`page-${p.id}`);
-	                                                    if (el) {
-	                                                        const rect = el.getBoundingClientRect();
-	                                                        const visibleHeight = Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0);
-	                                                        if (visibleHeight > maxVisible) {
-	                                                            maxVisible = visibleHeight;
-	                                                            bestIdx = idx;
-	                                                        }
-	                                                    }
-	                                                });
-	                                                const page = pages[bestIdx];
-	                                                const newFields = [...(page.fields || []), { id: generateId(), label: "", value: false, type: 'checkbox', valueColor: '#000000', style: { font: currentSheet.textStyle.font, size: currentSheet.textStyle.size, color: '#000000', labelColor: currentSheet.headerConfig.lineColor }, x: 50, y: 50, width: 30, height: 30 }];
-	                                                updatePage(bestIdx, { ...page, fields: newFields });
-	                                            }} className="bg-green-600 text-white p-2 rounded-lg hover:bg-green-700 flex-1 flex justify-center" title="X"><X size={14}/></button>
-	                                            
-	                                            <button onClick={() => {
-	                                                const pages = currentSheet.pages;
-	                                                let bestIdx = 0;
-	                                                let maxVisible = 0;
-	                                                pages.forEach((p, idx) => {
-	                                                    const el = document.getElementById(`page-${p.id}`);
-	                                                    if (el) {
-	                                                        const rect = el.getBoundingClientRect();
-	                                                        const visibleHeight = Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0);
-	                                                        if (visibleHeight > maxVisible) {
-	                                                            maxVisible = visibleHeight;
-	                                                            bestIdx = idx;
-	                                                        }
-	                                                    }
-	                                                });
-	                                                const page = pages[bestIdx];
-	                                                const newFields = [...(page.fields || []), { id: generateId(), label: "", value: false, type: 'checkmark', valueColor: '#000000', style: { font: currentSheet.textStyle.font, size: currentSheet.textStyle.size, color: '#000000', labelColor: currentSheet.headerConfig.lineColor }, x: 50, y: 50, width: 30, height: 30 }];
-	                                                updatePage(bestIdx, { ...page, fields: newFields });
-	                                            }} className="bg-emerald-600 text-white p-2 rounded-lg hover:bg-emerald-700 flex-1 flex justify-center" title="Check"><Check size={14}/></button>
-	                                            
-	                                            <button onClick={() => {
-	                                                const pages = currentSheet.pages;
-	                                                let bestIdx = 0;
-	                                                let maxVisible = 0;
-	                                                pages.forEach((p, idx) => {
-	                                                    const el = document.getElementById(`page-${p.id}`);
-	                                                    if (el) {
-	                                                        const rect = el.getBoundingClientRect();
-	                                                        const visibleHeight = Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0);
-	                                                        if (visibleHeight > maxVisible) {
-	                                                            maxVisible = visibleHeight;
-	                                                            bestIdx = idx;
-	                                                        }
-	                                                    }
-	                                                });
-	                                                const page = pages[bestIdx];
-	                                                const newFields = [...(page.fields || []), { id: generateId(), label: "", value: false, type: 'square', valueColor: '#000000', style: { font: currentSheet.textStyle.font, size: currentSheet.textStyle.size, color: '#000000', labelColor: currentSheet.headerConfig.lineColor }, x: 50, y: 50, width: 30, height: 30 }];
-	                                                updatePage(bestIdx, { ...page, fields: newFields });
-	                                            }} className="bg-orange-600 text-white p-2 rounded-lg hover:bg-orange-700 flex-1 flex justify-center" title="Quadrado"><Grid size={14}/></button>
-	                                        </div>
-	                                    </div>
+                                    <button onClick={() => {
+                                        const activePageIdx = currentSheet.pages.findIndex(p => p.id === (document.querySelector('.tech-sheet-page:hover')?.id || currentSheet.pages[0].id));
+                                        const page = currentSheet.pages[activePageIdx];
+                                        const newFields = [...(page.fields || []), { id: generateId(), label: "", value: "", type: 'text', style: { font: currentSheet.textStyle.font, size: currentSheet.textStyle.size, color: currentSheet.textStyle.color, labelColor: currentSheet.headerConfig.lineColor }, x: 50, y: 50, width: 200, height: 40 }];
+                                        updatePage(activePageIdx, { ...page, fields: newFields });
+                                    }} className="flex flex-col items-center gap-1 bg-blue-600 text-white p-2 rounded-xl text-[8px] font-black uppercase hover:bg-blue-700 transition-all" title="Adicionar Texto"><TypeIcon size={18}/><span>TEXTO</span></button>
+                                    
+                                    <div className="flex flex-col gap-2 bg-gray-800 p-2 rounded-xl border border-gray-700">
+                                        <span className="text-[7px] text-gray-500 font-black text-center uppercase">Marcações</span>
+                                        <div className="flex gap-1 justify-center">
+                                            <button onClick={() => {
+                                                const activePageIdx = currentSheet.pages.findIndex(p => p.id === (document.querySelector('.tech-sheet-page:hover')?.id || currentSheet.pages[0].id));
+                                                const page = currentSheet.pages[activePageIdx];
+                                                const newFields = [...(page.fields || []), { id: generateId(), label: "", value: false, type: 'checkbox', valueColor: '#000000', style: { font: currentSheet.textStyle.font, size: currentSheet.textStyle.size, color: '#000000', labelColor: currentSheet.headerConfig.lineColor }, x: 50, y: 50, width: 30, height: 30 }];
+                                                updatePage(activePageIdx, { ...page, fields: newFields });
+                                            }} className="bg-green-600 text-white p-2 rounded-lg hover:bg-green-700 flex-1 flex justify-center" title="X"><X size={14}/></button>
+                                            
+                                            <button onClick={() => {
+                                                const activePageIdx = currentSheet.pages.findIndex(p => p.id === (document.querySelector('.tech-sheet-page:hover')?.id || currentSheet.pages[0].id));
+                                                const page = currentSheet.pages[activePageIdx];
+                                                const newFields = [...(page.fields || []), { id: generateId(), label: "", value: false, type: 'checkmark', valueColor: '#000000', style: { font: currentSheet.textStyle.font, size: currentSheet.textStyle.size, color: '#000000', labelColor: currentSheet.headerConfig.lineColor }, x: 50, y: 50, width: 30, height: 30 }];
+                                                updatePage(activePageIdx, { ...page, fields: newFields });
+                                            }} className="bg-emerald-600 text-white p-2 rounded-lg hover:bg-emerald-700 flex-1 flex justify-center" title="Check"><Check size={14}/></button>
+                                            
+                                            <button onClick={() => {
+                                                const activePageIdx = currentSheet.pages.findIndex(p => p.id === (document.querySelector('.tech-sheet-page:hover')?.id || currentSheet.pages[0].id));
+                                                const page = currentSheet.pages[activePageIdx];
+                                                const newFields = [...(page.fields || []), { id: generateId(), label: "", value: false, type: 'square', valueColor: '#000000', style: { font: currentSheet.textStyle.font, size: currentSheet.textStyle.size, color: '#000000', labelColor: currentSheet.headerConfig.lineColor }, x: 50, y: 50, width: 30, height: 30 }];
+                                                updatePage(activePageIdx, { ...page, fields: newFields });
+                                            }} className="bg-orange-600 text-white p-2 rounded-lg hover:bg-orange-700 flex-1 flex justify-center" title="Quadrado"><Grid size={14}/></button>
+                                        </div>
+                                    </div>
                                     
                                     <div className="w-full h-px bg-gray-700 my-2"></div>
                                     
